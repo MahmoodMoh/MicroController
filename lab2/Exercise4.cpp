@@ -1,15 +1,15 @@
 #include <iostream>
 using namespace std;
 
-int main() {  // Added braces for main()
-    int num;
+int main() {  
+    int num; //defining the integer variable
 
-    while (true) {  // Added braces for while loop
-        cout << "Enter a number: ";
-        cin >> num;
+    while (true) {  // Infinite loop, if true
+        cout << "Enter a number: "; // Prompt the user to enter a number
+        cin >> num; // scanning or reading the input number entered by the user
 
-        if (num < 0) {
-            cout << "Negative number entered. Exiting..." << endl;
+        if (num < 0) { // if the given number is less than zero
+            cout << "Negative number entered. Exiting..." << endl; // print Exiting...
             break;  // Exit loop if negative
         }
 
