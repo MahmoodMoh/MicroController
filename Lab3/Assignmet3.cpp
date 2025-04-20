@@ -18,7 +18,7 @@ class Car{
     }
     //Destructor
     ~Car(){
-        cout << "Car " << brand << ", year: " << year << endl;
+        cout << "Car " << brand  << " destroyed. " << endl;
     }
     void showInfo() {
         cout << "Brand: " << brand << ", year: " << year << endl;
