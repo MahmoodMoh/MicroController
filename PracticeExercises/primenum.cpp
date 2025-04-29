@@ -1,6 +1,6 @@
 #include <iostream>
 using namespace std;
-
+//B
 bool isPrimeNumber(int number){
     bool isPrimeFlag = true;
     for (int i = 2; i < number; i++){
@@ -12,7 +12,8 @@ return true;
 //return isPrimeFlag;
 }
 int main(){
-    /*int number;
+    /* A
+    int number;
     cout << "Number: ";
     cin >> number;
 
