@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/Käyttäjä/Git/MicroController/lab2",
-      "program": "c:/Users/Käyttäjä/Git/MicroController/lab2/build/Debug/outDebug",
+      "cwd": "c:/Users/Käyttäjä/Git/MicroController/PracticeExercises",
+      "program": "c:/Users/Käyttäjä/Git/MicroController/PracticeExercises/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

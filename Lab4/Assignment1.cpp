@@ -12,7 +12,7 @@ public:
     // Constructor with default values
     Complex(double r = 0, double i = 0) : real(r), imag(i) {}
 
-    // Overload << operator for printing complex numbers
+    // Overload operator for printing complex numbers
     // Note: it must be a friend function to access private members
     friend ostream& operator<<(ostream& COUT, const Complex& c) {
         if (c.imag >= 0)

@@ -87,7 +87,7 @@ class Car {
                 cout << "Destroying Hybrid Car: " << model << endl;
             }
 
-            // Overriding the displayInfo
+            // Overriding the displayInfo from the parent class and prints the child's attribute too
             void displayInfo() const override {
                 Car::displayInfo();
                 cout <<", Battery: " << batterySize << "kWh, Fuel: " << fuelCapacity << " L " << endl;
