@@ -333,7 +333,7 @@ int main() {
     // Infinite loop
     while (true) {                                          
         cout << "\n ----- Vending Machine Menu -----\n";
-        cout << "1. View Products and Purchase...\n2. Return the Change\n3. Admin: Restock\n4. Admin: View Earnings\n5. Exit\n";
+        cout << "1. View Products and Purchase\n2. Return the Change\n3. Admin: Restock\n4. Admin: View Earnings\n5. Exit\n";
         cout << "Enter choice: ";
 
         // Input validation for menu choice
