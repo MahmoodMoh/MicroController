@@ -1,18 +1,18 @@
 #include <iostream>  
-#include <vector>     //for dynamic array (vector) container
-#include <map>      // for key-value pair (map) container
-#include <set>     // for unique element (set) container
+#include <vector>     //for dynamic array (vector) used for listing the products info
+#include <map>      // Used for tracking of how many times a particular product is sold
+#include <set>     // Used for restocking or making restocking easy
 #include <string>     // for string data type
 #include <iomanip>      // for stream manipulators (e.g., setw, setprecision)
 #include <limits> 
 
 // C++ compiler did not comile € symbol, that is why $ sign is used instead
 using namespace std;
-
+// Using of namespace for organizing the code to prevent compiling errors or mixing function names etc, works more like a folder
 namespace VendingSystem {
     class VendingComponent {
         protected:
-        string name = "";
+        string name;
 
         public:
         // Default constructor
@@ -37,7 +37,7 @@ namespace VendingSystem {
 
         public:
         Product() = default; // Default constructor
-        Product(const string& n = "", double p = 0.0, int s = 0) : VendingComponent(n), price(p), stock(s) {}
+        Product(const string& n, double p, int s) : VendingComponent(n), price(p), stock(s) {}
 
         virtual ~Product() = default;
 
@@ -50,28 +50,27 @@ namespace VendingSystem {
         void setPrice(double p) { price = p;}
         void setStock(int s) { stock = s; }
 
-        Product operator +(const Product& other) const { // Operator overloading for adding two products
+        Product operator +(const Product& other) const { // Operloading two product parts
             return Product (name + "_" + other.name, (price + other.price) / 2, stock + other.stock);
         }
-        friend ostream& operator<<(ostream& os, const Product& p) { // Friend function to overload << operator
+        friend ostream& operator<<(ostream& os, const Product& p) { // Overloading part
             os << p.name << " ($" << fixed << setprecision(2) << p.price
                << ", " << p.stock << " in stock)";
             return os;
         }
     };
 
-    // Subclass derived from Product
+    // The class Snack inherits from Product
     class Snack : public Product {
         
         private: 
         string flavor;
 
-        public: 
-        // Constructor with default values
-        Snack(const string&n = "", double p = 0.0, int s = 0, const string& f = "") : Product(n, p, s), flavor(f) {}
+        public: // Constructor 
+        Snack(const string&n, double p , int s, const string& f) : Product(n, p, s), flavor(f) {}
 
         void displayInfo() const override {     // Overriding display method
-            cout << "Snack: " << name << " (" << flavor << "), Price: €" << fixed
+            cout << "Snack: " << name << " (" << flavor << "), Price: $" << fixed
                  << setprecision(2) << price << ", Stock: " << stock << endl; 
         }
     
@@ -85,8 +84,8 @@ namespace VendingSystem {
         string type;
 
         public:
-        // Constructor with default values
-        Beverage(const string& n = "", double p = 0.0, int s = 0, const string& t = "") : Product(n, p, s), type(t) {}
+        // Constructor
+        Beverage(const string& n, double p, int s, const string& t) : Product(n, p, s), type(t) {}
         void displayInfo() const override {
             cout << "Beverage: " << name << " (" << type << "), Price: $" << fixed << setprecision(2) << price << ", Stock: " << stock << endl;
         }
@@ -98,15 +97,16 @@ namespace VendingSystem {
      // Helper Class 'VendingMachine'
      class VendingMachine {
         private:
-        vector<Product*> inventory;     // Vector to store pointers to Product objects
-        map<string, int> sales;         // Map to track sales count by product name
-        set<string> outOfStock;         // Set to track out-of-stock products
-        double balance = 0.0;         
-        double totalEarnings = 0.0;
+        vector<Product*> inventory; // Using vector for listing the produncts and pointer to Product objects
+        map<string, int> sales;      // Map is used to track sales count
+        set<string> outOfStock;         // Set is used to track out-of-stock products
+        double balance;         
+        double totalEarnings;
 
         public:
         VendingMachine () { // Constructor
 
+            // Listing all the Products information by the help of vector and pointers
             inventory.push_back( new Beverage ("Coke", 2.99, 15, "Soda"));
             inventory.push_back( new Beverage ("Red Bull", 3.55, 20, "Energy Drink"));
             inventory.push_back( new Beverage ("Apple Juice", 1.20, 10, "Juice"));
@@ -124,13 +124,13 @@ namespace VendingSystem {
             inventory.push_back( new Snack ("Crackers", 2.30, 12, "Plain"));
 
         }
-        ~VendingMachine() {
+        ~VendingMachine() { // Destroying the Vending Machine
             for (Product*p : inventory) {
                 delete p;
             }
         }
 
-        void displayInventory() {
+        void displayInventory() { // The function to show and display the inventory list
             int category;
         
             while(true) {
@@ -140,134 +140,181 @@ namespace VendingSystem {
                 cout <<"1. Beverage \n 2. Snacks \n\n Enter Choice: ";
                 cin >> category;
                 if (category == 0) break;
-                
+                // Use of switch for choosing between beverage and snack option
                 switch (category) {
-                    case 1: {     // Beverages Menu Header (setw = sets weidth)
-                        cout <<" \n *** Beverages ***\n ";
-                        cout << left ; // For the left alignement text
-                        cout << setw(5) << "No." << setw(20) << "Name" << setw(15) << "Type" << setw(15) << "Price ($)" << setw(10) << "Stock" << endl;
-                        cout << string (70, '_') << endl;
+                    case 1: { // The Beverage Menu list, by the help of (setw = wet width) the menu looks more organized or like a table
+                        // The left is used for the text aligning as left.
+                        cout << "\n*** Beverages ***\n";
+                        cout << left << setw(5) << "No." << setw(20) << "Name" << setw(15) << "Type" << setw(15) << "Price ($)" << setw(10) << "Stock" << endl;
+                        cout << string(70, '-') << endl;
 
+                        vector<size_t> beverageIndices;
                         size_t index = 0;
                         for (size_t i = 0; i < inventory.size(); i++) {
-                            Beverage* beverage = dynamic_cast<Beverage*> (inventory[i]);
+                            Beverage* beverage = dynamic_cast<Beverage*>(inventory[i]);
                             if (beverage) {
                                 ++index;
+                                beverageIndices.push_back(i);  // the defaultfloat part is used to prevent decimal points in stock values
                                 cout << setw(5) << index << setw(20) << beverage->getName() << setw(15) << beverage->getType()
-                                     << setw(15) << fixed << setprecision(2) << beverage->getPrice()
+                                     << setw(15) << fixed << setprecision(2) << beverage->getPrice() << defaultfloat
                                      << setw(10) << beverage->getStock() << endl;
-
                             }
                         }
+                        if (index == 0) {
+                            cout << "No beverages available.\n";
+                            break;
+                        }
                         int selection;
-                        cout << "\n Select a Beverage (1-" << index << ", 0 to go back): ";
-                        cin >> selection;
-                        if (selection > 0 && selection <= static_cast<int>(index)) {
-                            Beverage* beverage = dynamic_cast<Beverage*>(inventory[selection - 1]);
-                            if (beverage) {
-                                cout << "Selected: " << *beverage << endl;
-                            }
+                        cout << "\nSelect a Beverage (1-" << index << ", 0 to go back): ";
+                        while (!(cin >> selection)) {
+                            cout << "Invalid input! Please enter a number: ";
+                            cin.clear();
+                            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                        }
+                        if (selection == 0) break;
+                        if (selection < 1 || selection > static_cast<int>(index)) {
+                            cout << "Invalid selection!\n";
+                            break;
+                        }
+                        Beverage* beverage = dynamic_cast<Beverage*>(inventory[beverageIndices[selection - 1]]);
+                        if (beverage) {
+                            cout << "Selected: " << *beverage << endl;
+                            processPurchase(beverage);
                         }
                         break;
                     }
-
-                    case 2: {   // Snacks Menu Header
-                        cout <<" \n --- Snacks --- \n ";
-                        cout << left ; // for the left alignment text
-                        cout << setw(5) << "No." << setw(20) << "Name" << setw(15) << "Flavor" << setw(15) << "Price ($)" << setw(10) << "Stock" << endl;
+                    case 2: { // The Snack part is done the same as Beverage part. 
+                        cout << "\n*** Snacks ***\n";
+                        cout << left << setw(5) << "No." << setw(20) << "Name" << setw(15) << "Flavor" << setw(15) << "Price ($)" << setw(10) << "Stock" << endl;
                         cout << string(70, '-') << endl;
+
+                        vector<size_t> snackIndices;
                         size_t index = 0;
-                        
                         for (size_t i = 0; i < inventory.size(); i++) {
                             Snack* snack = dynamic_cast<Snack*>(inventory[i]);
                             if (snack) {
                                 ++index;
+                                snackIndices.push_back(i);
                                 cout << setw(5) << index << setw(20) << snack->getName() << setw(15) << snack->getFlavor()
-                                     << setw(15) << fixed << setprecision(2) << snack->getPrice()
+                                     << setw(15) << fixed << setprecision(2) << snack->getPrice() << defaultfloat
                                      << setw(10) << snack->getStock() << endl;
+                            }
                         }
-                    }
-                    int selection;
-                    cout << "\nSelect a snack (1-" << index << ", 0 to go back): ";
-                    cin >> selection;
-                    if (selection > 0 && selection <= static_cast<int>(index)) {
-                        Snack* snack = dynamic_cast<Snack*>(inventory[selection - 1]);
+                        if (index == 0) {
+                            cout << "No snacks available.\n";
+                            break;
+                        } // THe following part is added to do a product selection inside the Beverage or Snack catetory
+                        int selection;
+                        cout << "\nSelect a Snack (1-" << index << ", 0 to go back): ";
+                        while (!(cin >> selection)) {
+                            cout << "Invalid input! Please enter a number: ";
+                            cin.clear();
+                            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                        }
+                        if (selection == 0) break;
+                        if (selection < 1 || selection > static_cast<int>(index)) {
+                            cout << "Invalid selection!\n";
+                            break;
+                        }
+                        Snack* snack = dynamic_cast<Snack*>(inventory[snackIndices[selection - 1]]);
                         if (snack) {
                             cout << "Selected: " << *snack << endl;
+                            processPurchase(snack);
                         }
+                        break;
                     }
-                    break;
-                }
-                default:
-                    cout << "Invalid category!\n";
-                    }
+                    default:
+                        cout << "Invalid category!\n";
                 }
             }
+        }
 
-            // Method to insert money into the machine
+            // This part is also added inside the categories, to make it easy for the buyer to insert money after selection and purchase
             void insertMoney(double amount) {                       
                 if (amount > 0) {
                     balance += amount;
-                    cout << "Inserted: EUR" << fixed << setprecision(2) << amount
+                    cout << "Inserted: $" << fixed << setprecision(2) << amount
                     << ". Current balance: $" << balance << endl;
                 } else {
                     cout << "Invalid amount!\n";
                 }
              }
 
-             // Function to purchase a product
+
+
+             // The Purchasing part
              void purchase(const string& productName) {
-                for (Product* p : inventory) {
-                    if (p->getName() == productName) {
-                        if (p->getStock() == 0) {
-                            outOfStock.insert(productName);
-                            cout << productName << " is out of stock! \n";
-                            return;
-                        }
-                        if (balance >= p->getPrice()) {
-                            balance -= p->getPrice();
-                            p->setStock(p->getStock() -1);
-                            sales[productName] ++;
-                            totalEarnings += p->getPrice();
-                            cout << "Purchased " << *p << endl;
-                            cout << "Remaining balance: $" << fixed << setprecision(2) << balance << endl;
-                        }
-                        else {
-                            cout << "Insufficient balance! Insert $" << fixed << setprecision(2) << p->getPrice() << endl;
-                        }
+            for (Product* p : inventory) {
+                if (p->getName() == productName) {
+                    if (p->getStock() == 0) {
+                        outOfStock.insert(productName);
+                        cout << productName << " is out of stock!\n";
                         return;
                     }
-                }
-                cout << "Product not found! \n";
-             }
-
-             // Returning Money
-             void returnChange(){
-                if (balance > 0) {
-                    cout << "Returning Change: $" << fixed << setprecision(2) << balance << endl;
-                    balance = 0;
-                }
-             }
-
-             // Restocking a Product
-             void restock(const string& productName, int quantity) {
-                for (Product* p : inventory) {
-                    if (p->getName() == productName) {
-                        p-> setStock(p->getStock() + quantity);
-                        outOfStock.erase(productName);
-                        cout << productName << " restocked with " << quantity << " units \n";
-                        return;
+                    if (balance >= p->getPrice()) {
+                        balance -= p->getPrice();
+                        p->setStock(p->getStock() - 1);
+                        sales[productName]++;
+                        totalEarnings += p->getPrice();
+                        cout << "Purchased: " << *p << endl;
+                        cout << "Remaining balance: $" << fixed << setprecision(2) << balance << endl;
+                    } else {
+                        cout << "Insufficient balance! Need $" << fixed << setprecision(2) << (p->getPrice() - balance) << " more.\n";
                     }
+                    return;
                 }
-                cout << "Product not found! \n";
-             }
+            }
+            cout << "Product not found!\n";
+        }
 
-             // Display total Earnings of the machine 
-             void displayEarnings() const {
-                cout << "Total Earnings: $" << fixed << setprecision(2) << totalEarnings << endl;
-                cout << "Sales by product: \n";
-                for (const auto& sale : sales) {
-                    cout << sale.first << ": " << sale.second << " units \n";
+        void processPurchase(Product* product) {
+            if (product->getStock() == 0) {
+                outOfStock.insert(product->getName());
+                cout << product->getName() << " is out of stock!\n";
+                return;
+            }
+            cout << "Price: $" << fixed << setprecision(2) << product->getPrice() << ". Current balance: $" << balance << endl;
+            while (balance < product->getPrice()) {
+                double amount;
+                cout << "Insert $" << fixed << setprecision(2) << (product->getPrice() - balance) << " or more (0 to cancel): ";
+                while (!(cin >> amount)) {
+                    cout << "Invalid input! Please enter a number: ";
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                }
+                if (amount == 0) {
+                    cout << "Purchase cancelled.\n";
+                    return;
+                }
+                insertMoney(amount);
+            }
+            purchase(product->getName());
+        }
+
+        void returnChange() {
+            if (balance > 0) {
+                cout << "Returning Change: $" << fixed << setprecision(2) << balance << endl;
+                balance = 0;
+            }
+        }
+
+        void restock(const string& productName, int quantity) {
+            for (Product* p : inventory) {
+                if (p->getName() == productName) {
+                    p->setStock(p->getStock() + quantity);
+                    outOfStock.erase(productName);
+                    cout << productName << " restocked with " << quantity << " units\n";
+                    return;
+                }
+            }
+            cout << "Product not found!\n";
+        }
+
+        void displayEarnings() const {
+            cout << "Total Earnings: $" << fixed << setprecision(2) << totalEarnings << endl;
+            cout << "Sales by product:\n";
+            for (const auto& sale : sales) {
+                cout << sale.first << ": " << sale.second << " units\n";
             }
         }
     };
@@ -282,47 +329,45 @@ int main() {
     VendingMachine vm;   
     int choice;
     string productName;
-    double amount;
+    int quantity;
     // Infinite loop
     while (true) {                                          
         cout << "\n ----- Vending Machine Menu -----\n";
-        cout << "1. View Products\n2. Insert Money\n3. Purchase Item\n"
-             << "4. Return Change\n5. Admin: Restock\n6. Admin: View Earnings\n7. Exit\n";
+        cout << "1. View Products and Purchase...\n2. Return the Change\n3. Admin: Restock\n4. Admin: View Earnings\n5. Exit\n";
         cout << "Enter choice: ";
-        cin >> choice;
 
+        // Input validation for menu choice
+        while(!(cin >> choice)) {
+            cout <<"Invalid input! Please Enter a number: ";
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+
+        // Using switch case to toggle between the Vending machine menu list
         switch (choice) {
             case 1:
                 vm.displayInventory();   
                 break;
             case 2:
-                cout << "Enter amount to insert: ";
-                cin >> amount;
-                vm.insertMoney(amount);                     
+                vm.returnChange();                     
                 break;
-            case 3:
-                cout << "Enter product name: ";
+            case 3: 
+            cout << "Enter product name: ";
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 getline(cin, productName);
-                vm.purchase(productName);                   
-                break;
-            case 4:
-                vm.returnChange();                          
-                break;
-            case 5: {
-                cout << "Enter product name to restock: ";
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                getline(cin, productName);
-                int quantity;
                 cout << "Enter quantity: ";
-                cin >> quantity;
-                vm.restock(productName, quantity);          
+                while (!(cin >> quantity)) {
+                    cout << "Invalid input! Please enter a number: ";
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                }
+                vm.restock(productName, quantity);                   
                 break;
-            }
-            case 6:
-                vm.displayEarnings();                       
+                
+            case 4:
+                vm.displayEarnings();                          
                 break;
-            case 7:
+            case 5: 
                 cout << "Thank you for using the vending machine!\n";
                 return 0;                                   
             default:
