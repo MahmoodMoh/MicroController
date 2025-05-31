@@ -4,7 +4,7 @@
 #include <set>     // Used for restocking or making restocking easy
 #include <string>     // for string data type
 #include <iomanip>      // for stream manipulators (e.g., setw, setprecision)
-#include <limits> 
+#include <limits> // Is used to access the smallest and largest possible values of data types
 
 // C++ compiler did not comile € symbol, that is why $ sign is used instead
 using namespace std;
@@ -167,18 +167,18 @@ namespace VendingSystem {
                         int selection;
                         cout << "\nSelect a Beverage (1-" << index << ", 0 to go back): ";
                         while (!(cin >> selection)) {
-                            cout << "Invalid input! Please enter a number: ";
+                            cout << "\nInvalid input! Please enter a number: ";
                             cin.clear();
                             cin.ignore(numeric_limits<streamsize>::max(), '\n');
                         }
                         if (selection == 0) break;
                         if (selection < 1 || selection > static_cast<int>(index)) {
-                            cout << "Invalid selection!\n";
+                            cout << "\nInvalid selection!\n";
                             break;
                         }
                         Beverage* beverage = dynamic_cast<Beverage*>(inventory[beverageIndices[selection - 1]]);
                         if (beverage) {
-                            cout << "Selected: " << *beverage << endl;
+                            cout << "\nSelected: " << *beverage << endl;
                             processPurchase(beverage);
                         }
                         break;
@@ -201,30 +201,30 @@ namespace VendingSystem {
                             }
                         }
                         if (index == 0) {
-                            cout << "No snacks available.\n";
+                            cout << "\nNo snacks available.\n";
                             break;
                         } // THe following part is added to do a product selection inside the Beverage or Snack catetory
                         int selection;
                         cout << "\nSelect a Snack (1-" << index << ", 0 to go back): ";
                         while (!(cin >> selection)) {
-                            cout << "Invalid input! Please enter a number: ";
+                            cout << "\nInvalid input! Please enter a number: ";
                             cin.clear();
                             cin.ignore(numeric_limits<streamsize>::max(), '\n');
                         }
                         if (selection == 0) break;
                         if (selection < 1 || selection > static_cast<int>(index)) {
-                            cout << "Invalid selection!\n";
+                            cout << "\nInvalid selection!\n";
                             break;
                         }
                         Snack* snack = dynamic_cast<Snack*>(inventory[snackIndices[selection - 1]]);
                         if (snack) {
-                            cout << "Selected: " << *snack << endl;
+                            cout << "\nSelected: " << *snack << endl;
                             processPurchase(snack);
                         }
                         break;
                     }
                     default:
-                        cout << "Invalid category!\n";
+                        cout << "\nInvalid category!\n";
                 }
             }
         }
@@ -233,10 +233,10 @@ namespace VendingSystem {
             void insertMoney(double amount) {                       
                 if (amount > 0) {
                     balance += amount;
-                    cout << "Inserted: $" << fixed << setprecision(2) << amount
+                    cout << "\n\nInserted: $" << fixed << setprecision(2) << amount
                     << ". Current balance: $" << balance << endl;
                 } else {
-                    cout << "Invalid amount!\n";
+                    cout << "\nInvalid amount!\n";
                 }
              }
 
@@ -256,10 +256,10 @@ namespace VendingSystem {
                         p->setStock(p->getStock() - 1);
                         sales[productName]++;
                         totalEarnings += p->getPrice();
-                        cout << "Purchased: " << *p << endl;
+                        cout << "\nPurchased: " << *p << endl;
                         cout << "Remaining balance: $" << fixed << setprecision(2) << balance << endl;
                     } else {
-                        cout << "Insufficient balance! Need $" << fixed << setprecision(2) << (p->getPrice() - balance) << " more.\n";
+                        cout << "\nInsufficient balance! Need $" << fixed << setprecision(2) << (p->getPrice() - balance) << " more.\n";
                     }
                     return;
                 }
@@ -276,14 +276,14 @@ namespace VendingSystem {
             cout << "Price: $" << fixed << setprecision(2) << product->getPrice() << ". Current balance: $" << balance << endl;
             while (balance < product->getPrice()) {
                 double amount;
-                cout << "Insert $" << fixed << setprecision(2) << (product->getPrice() - balance) << " or more (0 to cancel): ";
+                cout << "\nInsert $" << fixed << setprecision(2) << (product->getPrice() - balance) << " or more (0 to cancel): ";
                 while (!(cin >> amount)) {
-                    cout << "Invalid input! Please enter a number: ";
+                    cout << "\nInvalid input! Please enter a number: ";
                     cin.clear();
                     cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 }
                 if (amount == 0) {
-                    cout << "Purchase cancelled.\n";
+                    cout << "\nPurchase cancelled.\n";
                     return;
                 }
                 insertMoney(amount);
@@ -293,7 +293,7 @@ namespace VendingSystem {
 
         void returnChange() {
             if (balance > 0) {
-                cout << "Returning Change: $" << fixed << setprecision(2) << balance << endl;
+                cout << "\nReturning Change: $" << fixed << setprecision(2) << balance << endl;
                 balance = 0;
             }
         }
@@ -307,12 +307,12 @@ namespace VendingSystem {
                     return;
                 }
             }
-            cout << "Product not found!\n";
+            cout << "\nProduct not found!\n";
         }
 
         void displayEarnings() const {
-            cout << "Total Earnings: $" << fixed << setprecision(2) << totalEarnings << endl;
-            cout << "Sales by product:\n";
+            cout << "\nTotal Earnings: $" << fixed << setprecision(2) << totalEarnings << endl;
+            cout << "\nSales by product:\n";
             for (const auto& sale : sales) {
                 cout << sale.first << ": " << sale.second << " units\n";
             }
@@ -338,7 +338,7 @@ int main() {
 
         // Input validation for menu choice
         while(!(cin >> choice)) {
-            cout <<"Invalid input! Please Enter a number: ";
+            cout <<"\nInvalid input! Please Enter a number: ";
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
         }
@@ -352,12 +352,12 @@ int main() {
                 vm.returnChange();                     
                 break;
             case 3: 
-            cout << "Enter product name: ";
+            cout << "\nEnter product name: ";
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 getline(cin, productName);
-                cout << "Enter quantity: ";
+                cout << "\nEnter quantity: ";
                 while (!(cin >> quantity)) {
-                    cout << "Invalid input! Please enter a number: ";
+                    cout << "\nInvalid input! Please enter a number: ";
                     cin.clear();
                     cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 }
@@ -368,10 +368,10 @@ int main() {
                 vm.displayEarnings();                          
                 break;
             case 5: 
-                cout << "Thank you for using the vending machine!\n";
+                cout << "\nThank you for using the vending machine!\n";
                 return 0;                                   
             default:
-                cout << "Invalid choice!\n";      
+                cout << "\nInvalid choice!\n";      
         }
     }
 }
