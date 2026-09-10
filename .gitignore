@@ -1,0 +1,7 @@
+# Generated files (already tracked files are unaffected)
+/build/
+*.exe
+*.o
+*.obj
+*.out
+tempCodeRunnerFile*
